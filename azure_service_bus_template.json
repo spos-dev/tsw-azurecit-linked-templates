@@ -48,30 +48,31 @@
                         "enableExpress": false
                     },
                     "resources": [
-                        {
-                            "name": "[concat(variables('subscriptionName'), '-', copyIndex('serviceBusSubscriptions'))]",
-                            "type": "subscriptions",
-                            "apiVersion": "2017-04-01",
-                            "dependsOn": [
-                                "[variables('topicsName')]"
-                            ],
-                            "properties": {
-                                "requiresSession": false,
-                                "deadLetteringOnFilterEvaluationExceptions": false,
-                                "deadLetteringOnMessageExpiration": false,
-                                "maxDeliveryCount": 24,
-                                "status": "Active",
-                                "enableBatchedOperations": true
-                            },
-                            "resources": [],
-                            "copy": {
-                                "name": "serviceBusSubscriptions",
-                                "count": 3
-                            }
-                        }
+                        
                     ]
                 }
             ]
+        },
+        {
+            "name": "[concat(variables('subscriptionName'), '-', copyIndex('serviceBusSubscriptions'))]",
+            "type": "subscriptions",
+            "apiVersion": "2017-04-01",
+            "dependsOn": [
+                "[variables('topicsName')]"
+            ],
+            "properties": {
+                "requiresSession": false,
+                "deadLetteringOnFilterEvaluationExceptions": false,
+                "deadLetteringOnMessageExpiration": false,
+                "maxDeliveryCount": 24,
+                "status": "Active",
+                "enableBatchedOperations": true
+            },
+            "resources": [],
+            "copy": {
+                "name": "serviceBusSubscriptions",
+                "count": 3
+            }
         }
     ],
     "outputs": {
