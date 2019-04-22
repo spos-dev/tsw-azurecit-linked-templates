@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.0.1",
+    "parameters": {
+        "serviceBusName": {
+            "type": "string",
+            "defaultValue": "tswServiceBus"
+        }
+    },
+    "variables": {
+        "defaultSASKey_Name": "RootManageSharedAccessKey",
+        "authRuleResource_Id": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusName'), variables('defaultSASKey_Name'))]",
+        "sbVersion": "2017-04-01",
+        "topicsName": "[concat(parameters('serviceBusName'), '-topics')]",
+        "subscriptionName": "[concat(parameters('serviceBusName'), '-subscription')]"
+    },
+    "functions": [],
+    "resources": [
+        {
+            "name": "[parameters('serviceBusName')]",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2017-04-01",
+            "location": "eastus",
+            "tags": {},
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "properties": {},
+            "resources": [
+                {
+                    "name": "[variables('topicsName')]",
+                    "type": "topics",
+                    "apiVersion": "2017-04-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusName'))]"
+                    ],
+                    "properties": {
+                        "defaultMessageTimeToLive": "P14D",
+                        "maxSizeInMegabytes": 1024,
+                        "requiresDuplicateDetection": false,
+                        "duplicateDetectionHistoryTimeWindow": "PT10M",
+                        "enableBatchedOperations": true,
+                        "status": "Active",
+                        "supportOrdering": true,
+                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                        "enablePartitioning": false,
+                        "enableExpress": false
+                    },
+                    "resources": [
+                        {
+                            "name": "[concat(variables('subscriptionName'), '-', copyIndex('serviceBusSubscriptions'))]",
+                            "type": "subscriptions",
+                            "apiVersion": "2017-04-01",
+                            "dependsOn": [
+                                "[variables('topicsName')]"
+                            ],
+                            "properties": {
+                                "requiresSession": false,
+                                "deadLetteringOnFilterEvaluationExceptions": false,
+                                "deadLetteringOnMessageExpiration": false,
+                                "maxDeliveryCount": 24,
+                                "status": "Active",
+                                "enableBatchedOperations": true
+                            },
+                            "resources": [],
+                            "copy": {
+                                "name": "serviceBusSubscriptions",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "topicName": {
+            "type": "string",
+            "value": "[variables('topicsName')]"
+        },
+        "subscriptionName": {
+            "type": "string",
+            "value": "[variables('subscriptionName')]"
+        },
+        "NamespaceConnectionString": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResource_Id'), variables('sbVersion')).primaryConnectionString]"
+        },
+        "SharedAccessPolicyPrimaryKey": {
+            "type": "string",
+            "value": "[listkeys(variables('authRuleResource_Id'), variables('sbVersion')).primaryKey]"
+        }
+    }
+}
