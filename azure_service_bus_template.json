@@ -119,7 +119,7 @@
         },
         "TopicId":{
             "type": "string",
-            "value": "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), 'tsw-topics').path]"
+            "value": "[reference(concat(parameters('ServiceBusNamespaceName'), '/tsw-topics')).Path]"
         }
     }
 }
