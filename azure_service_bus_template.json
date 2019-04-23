@@ -116,6 +116,10 @@
         "ServiceBusConnectionString": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('ServiceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
+        },
+        "TopicId":{
+            "type": "string",
+            "value": "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), concat(parameters('ServiceBusNamespaceName'), '/tsw-topics'))]"
         }
     }
 }
