@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "0.0.0.1",
     "parameters": {
-        "serviceBusNamespaceName": {
+        "ServiceBusNamespaceName": {
             "type": "string",
             "defaultValue": "tswServiceBusNamespace"
         },
-        "subscriptionQty":{
+        "SubscriptionQty": {
             "type": "int",
-            "defaultValue": 3
+            "defaultValue": 1
         }
     },
     "variables": {},
@@ -17,28 +17,23 @@
         {
             "type": "Microsoft.ServiceBus/namespaces",
             "apiVersion": "2017-04-01",
-            "name": "[parameters('serviceBusNamespaceName')]",
+            "name": "[parameters('ServiceBusNamespaceName')]",
             "location": "East US",
             "sku": {
                 "name": "Standard",
                 "tier": "Standard"
             },
             "properties": {
-                "provisioningState": "Succeeded",
-                "metricId": "0536860d-808b-44d5-8234-7a0310dad290:tsw-servicebus",
-                "createdAt": "2019-04-22T13:04:55.57Z",
-                "updatedAt": "2019-04-22T13:05:19.163Z",
-                "serviceBusEndpoint": "[concat('https://', parameters('serviceBusNamespaceName'), '.servicebus.windows.net:443/')]",
-                "status": "Active"
+                "serviceBusEndpoint": "[concat('https://', parameters('ServiceBusNamespaceName'), '.servicebus.windows.net:443/')]"
             }
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('serviceBusNamespaceName'), '/RootManageSharedAccessKey')]",
+            "name": "[concat(parameters('ServiceBusNamespaceName'), '/RootManageSharedAccessKey')]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
                 "rights": [
@@ -51,10 +46,10 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/topics",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('serviceBusNamespaceName'), '/tsw-topics')]",
+            "name": "[concat(parameters('ServiceBusNamespaceName'), '/tsw-topics')]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
                 "defaultMessageTimeToLive": "P14D",
@@ -72,11 +67,11 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('serviceBusNamespaceName'), '/tsw-topics/tsw-subscription-', copyIndex('subscription'))]",
+            "name": "[concat(parameters('ServiceBusNamespaceName'), '/tsw-topics/tsw-subscription-', copyIndex('subscription'))]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'tsw-topics')]",
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), 'tsw-topics')]",
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
                 "lockDuration": "PT30S",
@@ -91,18 +86,18 @@
             },
             "copy": {
                 "name": "subscription",
-                "count": 3
+                "count": "[parameters('SubscriptionQty')]"
             }
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('serviceBusNamespaceName'), '/tsw-topics/tsw-subscription-', copyIndex('rule'), '/', 'rule', copyIndex('rule'))]",
+            "name": "[concat(parameters('ServiceBusNamespaceName'), '/tsw-topics/tsw-subscription-', copyIndex('rule'), '/', 'rule', copyIndex('rule'))]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('serviceBusNamespaceName'), 'tsw-topics', concat('tsw-subscription-', copyIndex('rule')))]",
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'tsw-topics')]",
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('ServiceBusNamespaceName'), 'tsw-topics', concat('tsw-subscription-', copyIndex('rule')))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), 'tsw-topics')]",
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
                 "action": {},
@@ -113,14 +108,14 @@
             },
             "copy": {
                 "name": "rule",
-                "count": 3
+                "count": "[parameters('SubscriptionQty')]"
             }
         }
     ],
     "outputs": {
         "ServiceBusConnectionString": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
+            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', 'tsw-test', 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
         }
     }
 }
