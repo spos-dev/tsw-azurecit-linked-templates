@@ -115,7 +115,7 @@
     "outputs": {
         "ServiceBusConnectionString": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', 'tsw-test', 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
+            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('ServiceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
         }
     }
 }
