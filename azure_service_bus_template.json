@@ -5,6 +5,10 @@
         "serviceBusNamespaceName": {
             "type": "string",
             "defaultValue": "tswServiceBusNamespace"
+        },
+        "subscriptionQty":{
+            "type": "int",
+            "defaultValue": 3
         }
     },
     "variables": {},
