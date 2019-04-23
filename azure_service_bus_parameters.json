@@ -4,6 +4,9 @@
     "parameters": {
         "serviceBusNamespaceName": {
             "value": "oligoTswServiceBusTest"
+        },
+        "subscriptionQty":{
+            "value": 2
         }
     }
 }
