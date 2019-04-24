@@ -15,7 +15,8 @@
         }
     },
     "variables": {
-        "subscriptionName": "[concat(parameters('TopicName'), '/tsw-subscription-')]"
+        "topicResourceName": "[concat(parameters('ServiceBusNamespaceName'), '/', parameters('TopicName'))]",
+        "subscriptionName": "[concat(variables('topicResourceName'), '/tsw-subscription-')]"
     },
     "functions": [],
     "resources": [
@@ -51,7 +52,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/topics",
             "apiVersion": "2017-04-01",
-            "name": "[parameters('TopicName')]",
+            "name": "[variables('topicResourceName')]",
             "location": "East US",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
@@ -75,7 +76,7 @@
             "name": "[concat(variables('subscriptionName'), copyIndex('subscription'))]",
             "location": "East US",
             "dependsOn": [
-               "[resourceId('Microsoft.ServiceBus/namespaces/topics', string(split(parameters('TopicName'), '/')[0]), string(split(parameters('TopicName'), '/')[1]))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), parameters('TopicName'))]",
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
@@ -100,8 +101,8 @@
             "name": "[concat(parameters('ServiceBusNamespaceName'), variables('subscriptionName'), copyIndex('rule'), '/', 'rule', copyIndex('rule'))]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('ServiceBusNamespaceName'), string(split(parameters('TopicName'), '/')[1]), concat('tsw-subscription-', copyIndex('rule')))]",
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics', string(split(parameters('TopicName'), '/')[0]), string(split(parameters('TopicName'), '/')[1]))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('ServiceBusNamespaceName'), parameters('TopicName'), concat('tsw-subscription-', copyIndex('rule')))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), parameters('TopicName'))]",
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
