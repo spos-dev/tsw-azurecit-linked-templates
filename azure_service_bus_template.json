@@ -15,7 +15,7 @@
         }
     },
     "variables": {
-        "subscriptionName": "[concat(parameters('ServiceBusNamespaceName'), '/', parameters('TopicName'), '/tsw-subscription-', copyIndex('subscription'))]"
+        "subscriptionName": "[concat(parameters('ServiceBusNamespaceName'), '/', parameters('TopicName'), '/tsw-subscription-')]"
     },
     "functions": [],
     "resources": [
