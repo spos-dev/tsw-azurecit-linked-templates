@@ -100,7 +100,7 @@
         "name": "[concat(parameters('ServiceBusNamespaceName'), variables('subscriptionName'), copyIndex('rule'), '/', 'rule', copyIndex('rule'))]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', string(split(parameters('TopicName'), '/')[0]), string(split(parameters('TopicName'), '/')[1]), concat('tsw-subscription-', copyIndex('rule')))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', '/', string(split(parameters('TopicName'), '/')[1]), concat('tsw-subscription-', copyIndex('rule')))]",
                 "[resourceId('Microsoft.ServiceBus/namespaces/topics', string(split(parameters('TopicName'), '/')[0]), string(split(parameters('TopicName'), '/')[1]))]",
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
