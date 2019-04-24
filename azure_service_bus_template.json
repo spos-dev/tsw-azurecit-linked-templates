@@ -75,7 +75,7 @@
             "name": "[concat(variables('subscriptionName'), copyIndex('subscription'))]",
             "location": "East US",
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), 'tsw-topics')]",
+               "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), parameters('TopicName'))]",
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
             ],
             "properties": {
