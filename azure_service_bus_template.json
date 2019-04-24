@@ -6,12 +6,17 @@
             "type": "string",
             "defaultValue": "tswServiceBusNamespace"
         },
+        "TopicName":{
+            "type": "string"
+        },
         "SubscriptionQty": {
             "type": "int",
             "defaultValue": 1
         }
     },
-    "variables": {},
+    "variables": {
+        "subscriptionName": "[concat(parameters('ServiceBusNamespaceName'), '/', parameters('TopicName'), '/tsw-subscription-', copyIndex('subscription'))]"
+    },
     "functions": [],
     "resources": [
         {
@@ -46,7 +51,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/topics",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('ServiceBusNamespaceName'), '/tsw-topics')]",
+            "name": "[parameters('TopicName')]",
             "location": "East US",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('ServiceBusNamespaceName'))]"
@@ -67,7 +72,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('ServiceBusNamespaceName'), '/tsw-topics/tsw-subscription-', copyIndex('subscription'))]",
+            "name": "[concat(variables('subscriptionName'), copyIndex('subscription'))]",
             "location": "East US",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('ServiceBusNamespaceName'), 'tsw-topics')]",
@@ -117,7 +122,7 @@
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('ServiceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').PrimaryConnectionString]"
         },
-        "TopicId":{
+        "TopicId": {
             "type": "object",
             "value": "[reference(concat('Microsoft.ServiceBus/namespaces/', parameters('ServiceBusNamespaceName'), '/topics/tsw-topics'))]"
         }
