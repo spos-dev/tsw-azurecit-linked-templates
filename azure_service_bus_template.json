@@ -124,7 +124,7 @@
         },
         "TopicId": {
             "type": "object",
-            "value": "[reference(concat('Microsoft.ServiceBus/namespaces/', parameters('ServiceBusNamespaceName'), '/topics/tsw-topics'))]"
+            "value": "[reference(concat('Microsoft.ServiceBus/namespaces/', parameters('ServiceBusNamespaceName'), '/topics/', parameters('TopicName')))]"
         }
     }
 }
